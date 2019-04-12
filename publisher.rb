@@ -3,13 +3,12 @@ require 'byebug'
 require_relative 'load_aws'
 
 class Publisher
-  # Note: You can store the values of the aws access keys and region list in a config file (json) 
-  # from where you can get the values into the constants.
+  
   ACCESS_KEY_ID = AWS["access_key_id"]
   SECRET_ACCESS_KEY = AWS["secret_access_key"]
   REGION = AWS["region"]
 
-  attr_accessor :sqs
+  attr_reader :sqs
 
   def initialize
     creds = Aws::Credentials.new(ACCESS_KEY_ID, SECRET_ACCESS_KEY)
@@ -27,13 +26,8 @@ class Publisher
       message = { count: count, timestamp: Time.now.strftime("%GW%V%uT%H%M%S%L%z") }.to_json
       puts "Sending message - #{message}"
       sqs.send_message(queue_url: queue_url, message_body: message, delay_seconds: delay_seconds)
+      sleep(5)
     end
-  end
-
-  def self.run_service(options)
-    sqs_pub = Publisher.new()    
-    queue = sqs_pub.create_std_q(options[0])
-    sqs_pub.publish_messages(queue.queue_url, options)    
   end
 end
 
@@ -44,4 +38,6 @@ if options[0].nil?
   return 
 end
 puts "Starting Queue Service..."
-Publisher.run_service(options)
+sqs_pub = Publisher.new()    
+queue = sqs_pub.create_std_q(options[0])
+sqs_pub.publish_messages(queue.queue_url, options)
