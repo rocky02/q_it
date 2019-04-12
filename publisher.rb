@@ -1,10 +1,13 @@
 require 'aws-sdk-sqs'
+require 'byebug'
+require_relative 'load_aws'
+
 class Publisher
   # Note: You can store the values of the aws access keys and region list in a config file (json) 
   # from where you can get the values into the constants.
-  ACCESS_KEY_ID = #<your access key id>
-  SECRET_ACCESS_KEY = #<your secret access key>
-  REGION = #<your aws account region>
+  ACCESS_KEY_ID = AWS["access_key_id"]
+  SECRET_ACCESS_KEY = AWS["secret_access_key"]
+  REGION = AWS["region"]
 
   attr_accessor :sqs
 
@@ -14,45 +17,31 @@ class Publisher
   end
 
   # For Standard Queue
-  def create_std_q queue_name
+  def create_std_q(queue_name)
     std_queue = sqs.create_queue(queue_name: queue_name)
   end
 
-  # For FIFO Queue
-  def create_fifo_q queue_name
-    queue_name = queue_name.split('.')[0]
-    fifo_queue = sqs.create_queue(queue_name: "#{queue_name}.fifo", attributes: { "FifoQueue": "true", "ContentBasedDeduplication": "true"})
-  end
-
-  def publish_messages queue
-    queue_url = queue.queue_url
+  def publish_messages(queue_url, options=[])
+    delay_seconds = options[1].nil? ? 5 : options[1]
     0.upto(Float::INFINITY) do |count|
-      timestamp = Time.now.strftime("%GW%V%uT%H%M%S%L%z")
-      message = { count: count, timestamp: timestamp }.to_json
-      puts "Message generated - #{message}"
-      puts "Sending message..."
-      if fifo? queue_url
-        sqs.send_message(queue_url: queue_url, message_body: message, message_group_id: timestamp)
-      else
-        sqs.send_message(queue_url: queue_url, message_body: message)
-      end
+      message = { count: count, timestamp: Time.now.strftime("%GW%V%uT%H%M%S%L%z") }.to_json
+      puts "Sending message - #{message}"
+      sqs.send_message(queue_url: queue_url, message_body: message, delay_seconds: delay_seconds)
     end
   end
 
-  def fifo? queue_url
-    queue_url.split('.')[-1] == 'fifo'
+  def self.run_service(options)
+    sqs_pub = Publisher.new()    
+    queue = sqs_pub.create_std_q(options[0])
+    sqs_pub.publish_messages(queue.queue_url, options)    
   end
 end
 
-puts "Starting Queue Service..."
-sqs_pub = Publisher.new()
-puts "Enter the name of the queue"
-queue_name = gets.chomp
-puts "enter 'fifo' if you want the queue to be FIFO else leave blank"
-queue_type = gets.chomp
-queue = if queue_type == 'fifo'
-sqs_pub.create_fifo_q(queue_name)
-else
-sqs_pub.create_std_q(queue_name)
+
+options = ARGV
+if options[0].nil?
+  puts "You must enter a queue name."
+  return 
 end
-sqs_pub.publish_messages(queue)
+puts "Starting Queue Service..."
+Publisher.run_service(options)
