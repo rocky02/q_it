@@ -1,10 +1,7 @@
-
 require 'aws-sdk-sqs'
-require 'byebug'
 require_relative 'load_aws'
 
 class Subscriber
-  
   ACCESS_KEY_ID = AWS["access_key_id"]
   SECRET_ACCESS_KEY = AWS["secret_access_key"]
   REGION = AWS["region"]
@@ -18,11 +15,18 @@ class Subscriber
 
 # Todo: URL validation
   def read_queue(options=[])
-    queue_url = options[0]
-    max_number_of_messages = options[1].nil? ? 10 : options[1]
-    wait_time_seconds = options[2].nil? ? 10 : options[2]
+    queue_url = options[0].chomp
+    # Note: AWS SQS wait_time_seconds ranges between 0-20 seconds. 
+    wait_time_seconds = if options[1].nil?
+                          0 
+                        elsif options[1].to_i > 20
+                          puts 'Your wait time must be between 0 to 20 seconds.'
+                          exit(1)
+                        else
+                          options[1].to_i
+                        end
     
-    result = sqs.receive_message(queue_url: queue_url, max_number_of_messages: max_number_of_messages, wait_time_seconds: wait_time_seconds)
+    result = sqs.receive_message(queue_url: queue_url, max_number_of_messages: 1, wait_time_seconds: wait_time_seconds)
     
     result.messages.each do |msg|
       puts "-"*50
