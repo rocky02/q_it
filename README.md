@@ -8,4 +8,3 @@ Publishing messages with Q_IT
 ```
 > ruby publisher.rb <your-queue-name(required)> <delay_seconds(optional)>
 ```
-
