@@ -15,13 +15,19 @@ class Publisher
     std_queue = sqs.create_queue(queue_name: queue_name)
   end
 
+  def valid_sleep_period?(sleep_period)
+    max_sleep_period = /\A([5-9]|1\d{1}|20)\z/
+    !sleep_period.nil? && sleep_period.match(max_sleep_period)
+  end
+
   def publish_messages(queue_url, options=[])
-    delay_seconds = options[1].nil? ? 5 : options[1]
+    sleep_period = valid_sleep_period?(options[1]) ? options[1].to_i : 5
+    
     0.upto(Float::INFINITY) do |count|
       message = { count: count, timestamp: Time.now.strftime("%GW%V%uT%H%M%S%L%z") }.to_json
       puts "Sending message - #{message}"
-      sqs.send_message(queue_url: queue_url, message_body: message, delay_seconds: delay_seconds)
-      sleep(5)
+      sqs.send_message(queue_url: queue_url, message_body: message)
+      sleep(sleep_period)
     end
   end
 end
