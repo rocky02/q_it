@@ -10,21 +10,20 @@ class Subscriber
     @sqs = Aws::SQS::Client.new(region: AWS["region"], credentials: creds)
   end
 
-# Todo: URL validation
+  def valid_sleep_period?(sleep_period)
+    sleep_period = '2'
+    max_sleep_period = /\A([3-9]|1[0-5])\z/
+    sleep_period.match?(max_sleep_period)
+  end
+  
+
+# Todo: URL validation /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/([a-zA-Z]*\d*[-_]*)+|(.fifo)\z/
   def read_queue(options=[])
     queue_url = options[0].chomp
-    # Note: AWS SQS wait_time_seconds ranges between 0-20 seconds. 
-    wait_time_seconds = if options[1].nil?
-                          0 
-                        elsif options[1].to_i > 20
-                          puts 'Your wait time must be between 0 to 20 seconds.'
-                          exit(1)
-                        else
-                          options[1].to_i
-                        end
+    sleep_period = valid_sleep_period?(options[1]) ? options[1].to_i : 5
     
     loop do
-      result = sqs.receive_message(queue_url: queue_url, max_number_of_messages: 1, wait_time_seconds: wait_time_seconds)
+      result = sqs.receive_message(queue_url: queue_url, max_number_of_messages: 1)
       
       result.messages.each do |msg|
         puts "-"*50
@@ -33,17 +32,13 @@ class Subscriber
         puts "Message Body: #{msg.body}"
         sqs.delete_message(queue_url: queue_url, receipt_handle: msg.receipt_handle)
       end
-      sleep(5)
+      sleep(sleep_period)
     end
   end
 end
 
 begin
   options = ARGV
-  if options[0].nil?
-    puts "You must enter the queue url."
-    return
-  end
   puts "Starting Subscriber service..."
   subscriber = Subscriber.new
   subscriber.read_queue(options)
