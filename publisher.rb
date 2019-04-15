@@ -1,4 +1,5 @@
 require 'aws-sdk-sqs'
+require_relative 'load_aws'
 
 class Publisher
   
