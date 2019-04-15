@@ -6,5 +6,5 @@ q_it is a simple console based application that uses the AWS SQS service to publ
 Publishing messages with Q_IT
 
 ```
-> ruby publisher.rb <your-queue-name(required)> <delay_seconds(optional)>
+> ruby app.rb <your-queue-name(required)> <delay_seconds(optional)>
 ```
