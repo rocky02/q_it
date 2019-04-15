@@ -1,5 +1,4 @@
 require 'aws-sdk-sqs'
-require 'byebug'
 require_relative 'load_aws'
 
 class Publisher
