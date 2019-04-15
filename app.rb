@@ -3,7 +3,6 @@ require 'bundler/setup'
 
 require 'byebug'
 
-require_relative 'load_aws'
 require_relative 'publisher.rb'
 
 options = ARGV
