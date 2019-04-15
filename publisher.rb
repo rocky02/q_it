@@ -2,15 +2,11 @@ require 'aws-sdk-sqs'
 
 class Publisher
   
-  ACCESS_KEY_ID = AWS["access_key_id"]
-  SECRET_ACCESS_KEY = AWS["secret_access_key"]
-  REGION = AWS["region"]
-
   attr_reader :sqs
 
   def initialize
-    creds = Aws::Credentials.new(ACCESS_KEY_ID, SECRET_ACCESS_KEY)
-    @sqs = Aws::SQS::Client.new(region: REGION, credentials: creds)
+    creds = Aws::Credentials.new(AWS["access_key_id"], AWS["secret_access_key"])
+    @sqs = Aws::SQS::Client.new(region: AWS["region"], credentials: creds)
   end
 
   # For Standard Queue
@@ -28,4 +24,3 @@ class Publisher
     end
   end
 end
-
