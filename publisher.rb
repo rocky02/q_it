@@ -24,7 +24,7 @@ class Publisher
 
   def publish_messages(queue_url)
     0.upto(Float::INFINITY) do |count|
-      message = { count: count, timestamp: Time.now.strftime("%GW%V%uT%H%M%S") }.to_json
+      message = { count: count, timestamp: Time.now.localtime.strftime("%F %T") }.to_json
       puts "Sending message - #{message}"
       sqs.send_message(queue_url: queue_url, message_body: message)
       sleep(sleep_period)
