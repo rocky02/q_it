@@ -1,16 +1,30 @@
 require 'rubygems'
 require 'bundler/setup'
-
-require 'byebug'
-
 require_relative 'publisher.rb'
+require_relative 'subscriber.rb'
 
-options = ARGV
-if options[0].nil?
-  puts "You must enter a queue name."
-  return 
+def run_service(options)
+  service = options.delete_at(0)
+  
+  case service
+  when 'publish'
+    publisher = Publisher.new(options)
+    publisher.start
+  when 'subscribe'
+    subscriber = Subscriber.new(options)
+    subscriber.start
+  else
+    puts "Invalid service name. Use 'publish' or 'subscribe'."
+    exit(1)
+  end
 end
-puts "Starting Queue Service..."
-sqs_pub = Publisher.new()    
-queue = sqs_pub.create_std_q(options[0])
-sqs_pub.publish_messages(queue.queue_url, options)
+
+# Beginning of execution of App.
+options = ARGV
+service = options[0]
+begin
+  puts "Starting Queue Service..."
+  run_service(options)
+rescue Exception => e
+  puts "There is an exception in the #{service} service #{e.inspect}"
+end
