@@ -1,13 +1,13 @@
 require 'aws-sdk-sqs'
 require_relative 'load_aws'
-require_relative 'aws_sqs'
+require_relative 'aws_sqs_client'
 
 class Subscriber
 
   attr_reader :sqs, :sleep_period, :queue_url
 
   def initialize(options)
-    @sqs = AwsSQS.new.client
+    @sqs = AwsSQSClient.new.client
     @queue_url = options[0].chomp
     @sleep_period = valid_sleep_period?(options[1]) ? options[1].to_i : 5
   end
