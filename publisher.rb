@@ -1,13 +1,13 @@
 require 'aws-sdk-sqs'
 require_relative 'load_aws'
+require_relative 'aws_sqs'
 
 class Publisher
   
   attr_reader :sqs, :sleep_period, :queue_name
 
   def initialize(options)
-    creds = Aws::Credentials.new(AWS["access_key_id"], AWS["secret_access_key"])
-    @sqs = Aws::SQS::Client.new(region: AWS["region"], credentials: creds)
+    @sqs = AwsSQS.new.client
     @sleep_period = valid_sleep_period?(options[1]) ? options[1].to_i : 5
     @queue_name = options[0]
   end
