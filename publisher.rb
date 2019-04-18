@@ -1,7 +1,7 @@
 require 'aws-sdk-sqs'
 require_relative 'load_aws'
 require_relative 'aws_sqs_client'
-require_relative 'q_it_argument_error'
+require_relative 'q_it_errors'
 
 class Publisher
   
@@ -9,8 +9,8 @@ class Publisher
 
   def initialize(options)
     @sqs = AwsSQSClient.new.client
+    @queue_name = valid_queue_name(options[0])
     @sleep_period = validate_sleep_period(options[1])
-    @queue_name = options[0]
   end
 
   # For Standard Queue
@@ -21,15 +21,26 @@ class Publisher
   def validate_sleep_period(sleep_period)
     max_sleep_period = /\A([5-9]|1\d{1}|20)\z/
     begin
-      if !sleep_period.nil? && sleep_period.match(max_sleep_period)
-        sleep_period
-      else
-        raise QItArgumentError.new(self), "Sleep time must be between 5-20 seconds."
-      end
+      raise QItNullSleepTimeError, "QItNullSleepTimeError :: #{self} Sleep period cannot be nil." if sleep_period.nil?
+      raise QItArgumentError, "QItArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 5-20 seconds." unless sleep_period.match(max_sleep_period)
+      sleep_period
     rescue QItArgumentError => e
       puts e
       exit(1)
-    end      
+    rescue QItNullSleepTimeError => e
+      puts e
+      exit(1)
+    end
+  end
+
+  def valid_queue_name(queue_name)
+    begin
+      raise QItNullQueueNameError, "QItNullQueueNameError :: #{self} Queue Name cannot be nil." if queue_name.nil?
+      queue_name
+    rescue QItNullQueueNameError => e
+      puts e
+      exit(1)
+    end
   end
 
   def publish_messages(queue_url)

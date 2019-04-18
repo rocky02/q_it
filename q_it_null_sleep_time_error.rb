@@ -1,0 +1,1 @@
+class QItNullSleepTimeError < StandardError; end

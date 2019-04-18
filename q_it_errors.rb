@@ -1,0 +1,5 @@
+require_relative 'q_it_argument_error'
+require_relative 'q_it_null_sleep_time_error'
+require_relative 'q_it_invalid_sqs_url_error'
+require_relative 'q_it_null_sqs_url_error'
+require_relative 'q_it_null_queue_name_error'
