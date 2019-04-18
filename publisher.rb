@@ -1,6 +1,7 @@
 require 'aws-sdk-sqs'
 require_relative 'load_aws'
 require_relative 'aws_sqs_client'
+require_relative 'q_it_argument_error'
 
 class Publisher
   
@@ -8,7 +9,7 @@ class Publisher
 
   def initialize(options)
     @sqs = AwsSQSClient.new.client
-    @sleep_period = valid_sleep_period?(options[1]) ? options[1].to_i : 5
+    @sleep_period = validate_sleep_period(options[1])
     @queue_name = options[0]
   end
 
@@ -17,9 +18,18 @@ class Publisher
     sqs.create_queue(queue_name: queue_name)
   end
 
-  def valid_sleep_period?(sleep_period)
+  def validate_sleep_period(sleep_period)
     max_sleep_period = /\A([5-9]|1\d{1}|20)\z/
-    !sleep_period.nil? && sleep_period.match(max_sleep_period)
+    begin
+      if !sleep_period.nil? && sleep_period.match(max_sleep_period)
+        sleep_period
+      else
+        raise QItArgumentError.new(self), "Sleep time must be between 5-20 seconds."
+      end
+    rescue QItArgumentError => e
+      puts e
+      exit(1)
+    end      
   end
 
   def publish_messages(queue_url)

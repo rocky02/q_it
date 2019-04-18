@@ -1,6 +1,7 @@
 require 'aws-sdk-sqs'
 require_relative 'load_aws'
 require_relative 'aws_sqs_client'
+require_relative 'q_it_argument_error'
 
 class Subscriber
 
@@ -9,12 +10,21 @@ class Subscriber
   def initialize(options)
     @sqs = AwsSQSClient.new.client
     @queue_url = options[0].chomp
-    @sleep_period = valid_sleep_period?(options[1]) ? options[1].to_i : 5
+    @sleep_period = validate_sleep_period(options[1])
   end
 
-  def valid_sleep_period?(sleep_period)
+  def validate_sleep_period(sleep_period)
     max_sleep_period = /\A([3-9]|1[0-5])\z/
-    !sleep_period.nil? && sleep_period.match?(max_sleep_period)
+    begin
+      if !sleep_period.nil? && sleep_period.match(max_sleep_period)
+        sleep_period.to_i
+      else
+        raise QItArgumentError.new(self), "Sleep time must be between 3-15 seconds."
+      end
+    rescue QItArgumentError => e
+      puts e
+      exit(1)
+    end
   end
   
 

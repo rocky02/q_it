@@ -25,6 +25,6 @@ service = options[0]
 begin
   puts "Starting Queue Service..."
   run_service(options)
-rescue Exception => e
+rescue ArgumentError => e
   puts "There is an exception in the #{service} service #{e.inspect}"
 end
