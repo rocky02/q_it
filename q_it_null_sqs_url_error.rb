@@ -1,1 +1,0 @@
-class QItNullSQSUrlError < StandardError; end

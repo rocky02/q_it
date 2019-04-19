@@ -1,1 +1,0 @@
-class QItInvalidSQSUrlError < StandardError; end

@@ -1,1 +1,0 @@
-class QItNullQueueNameError < StandardError; end

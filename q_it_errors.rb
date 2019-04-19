@@ -1,5 +1,14 @@
-require_relative 'q_it_argument_error'
-require_relative 'q_it_null_sleep_time_error'
-require_relative 'q_it_invalid_sqs_url_error'
-require_relative 'q_it_null_sqs_url_error'
-require_relative 'q_it_null_queue_name_error'
+
+# Note: Deriving QItStandardError Class from Ruby's StandardError Class 
+# and further deriving QIt Errors from QItStandardError.
+
+class QItStandardError < StandardError; end
+
+
+class QItNullSQSUrlError < QItStandardError; end
+
+class QItNullQueueNameError < QItStandardError; end
+
+class QItArgumentError < QItStandardError; end
+
+class QItInvalidSQSUrlError < QItStandardError; end
