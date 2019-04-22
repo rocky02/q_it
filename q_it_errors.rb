@@ -9,6 +9,10 @@ class QItNullSQSUrlError < QItStandardError; end
 
 class QItNullQueueNameError < QItStandardError; end
 
+class QItInvalidQueueNameError < QItStandardError; end
+
 class QItArgumentError < QItStandardError; end
 
 class QItInvalidSQSUrlError < QItStandardError; end
+
+class QItNoServiceError < QItStandardError; end
