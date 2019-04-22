@@ -27,7 +27,7 @@ class Publisher
   def self.valid_sleep_period?(sleep_period)
     max_sleep_period = /\A([5-9]|1\d{1}|20)\z/
     
-    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 5-20 seconds." unless sleep_period.match(max_sleep_period)
+    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 5-20 seconds." unless sleep_period.match?(max_sleep_period)
     
     sleep_period
   end
