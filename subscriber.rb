@@ -14,9 +14,8 @@ class Subscriber
 
   def self.validate(options)
     raise QItArgumentError, "QItArgumentError :: Incorrect number of arguments. Expected 2 got #{options.count}" if options.count != 2
-    url = options[0]
-    sleep_period = options[1]
-    valid_sqs_url?(url) && valid_sleep_period?(sleep_period)
+
+    valid_sqs_url?(options[0]) && valid_sleep_period?(options[1])
   end
   
   def self.valid_sqs_url?(sqs_url)

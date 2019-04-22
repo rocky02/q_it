@@ -16,9 +16,7 @@ class Publisher
   def self.validate(options)
     raise QItArgumentError, "QItArgumentError :: Incorrect number of arguments. Expected 2 got #{options.count}" if options.count != 2
     
-    queue_name = options[0]
-    sleep_period = options[1]
-    valid_queue_name?(queue_name) && valid_sleep_period?(sleep_period)
+    valid_queue_name?(options[0]) && valid_sleep_period?(options[1])
   end
 
   # For Standard Queue
