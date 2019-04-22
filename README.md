@@ -12,7 +12,7 @@ Publishing messages with Q_IT
 ```
 
 * _Queue name_ - Should be between 3-80 characters long with any alphanumeric characters and hyphen(-) and underscore(_) are allowed.
-* sleep_time_seconds : is the time in seconds between two consequtive send_message / receive_message calls made to the sqs server. Acceptable values range between 5-20 seconds.
+* sleep_time_seconds : is the time in seconds between two consequtive send_message / receive_message calls made to the sqs server. Acceptable values range between 5-20 seconds. Additionally, queue names are case-sensitive. That is queue name _QIt-test_ is different from queue name _Qit-test_.
 
 Subscribing to messages with Q_IT
 
