@@ -10,7 +10,7 @@ class Publisher
   def initialize(options)
     @sqs = AwsSQSClient.new.client
     @queue_name = options[0]
-    @sleep_period = options[1]
+    @sleep_period = options[1].to_i
   end
 
   def self.validate(options)
@@ -45,7 +45,7 @@ class Publisher
       message = { count: count, timestamp: Time.now.localtime.strftime("%F %T") }.to_json
       puts "Sending message - #{message}"
       sqs.send_message(queue_url: queue_url, message_body: message)
-      sleep(sleep_period.to_i)
+      sleep(sleep_period)
     end
   end
 

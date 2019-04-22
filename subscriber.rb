@@ -9,7 +9,7 @@ class Subscriber
   def initialize(options)
     @sqs = AwsSQSClient.new.client
     @queue_url = options[0]
-    @sleep_period = options[1]
+    @sleep_period = options[1].to_i
   end
 
   def self.validate(options)
@@ -48,7 +48,7 @@ class Subscriber
         puts "Message Body: #{msg.body}"
         sqs.delete_message(queue_url: queue_url, receipt_handle: msg.receipt_handle)
       end
-      sleep(sleep_period.to_i)
+      sleep(sleep_period)
     end
   end
 
