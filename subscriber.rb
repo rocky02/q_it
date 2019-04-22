@@ -13,7 +13,7 @@ class Subscriber
   end
 
   def self.validate(options)
-    raise QItArgumentError, "Incorrect number of arguments. Expected 2 got #{options.count}" if options.count != 2
+    raise QItArgumentError, "QItArgumentError :: Incorrect number of arguments. Expected 2 got #{options.count}" if options.count != 2
     url = options[0]
     sleep_period = options[1]
     valid_sqs_url?(url) && valid_sleep_period?(sleep_period)
@@ -22,8 +22,7 @@ class Subscriber
   def self.valid_sqs_url?(sqs_url)
     valid_sqs_url_regex = /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/[^.]+\z/
     
-    raise QItNullSQSUrlError, "QItNullSQSUrlError :: #{self} AWS SQS URL cannot be nil." if sqs_url.nil?
-    raise QItInvalidSQSUrlError, "QItInvalidSQSUrlError :: #{self} Invalid SQS URL #{sqs_url}." unless sqs_url.match?(valid_sqs_url_regex)
+    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid SQS URL #{sqs_url}." unless sqs_url.match?(valid_sqs_url_regex)
     
     sqs_url
   end
@@ -31,8 +30,7 @@ class Subscriber
   def self.valid_sleep_period?(sleep_period)
     max_sleep_period = /\A([3-9]|1[0-5])\z/
     
-    raise QItNullSleepTimeError, "QItNullSleepTimeError :: #{self} Sleep period cannot be nil." if sleep_period.nil?
-    raise QItArgumentError, "QItArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 3-15 seconds." unless sleep_period.match(max_sleep_period)
+    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 3-15 seconds." unless sleep_period.match?(max_sleep_period)
     
     sleep_period
   end

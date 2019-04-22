@@ -14,7 +14,7 @@ class Publisher
   end
 
   def self.validate(options)
-    raise QItArgumentError, "Incorrect number of arguments. Expected 2 got #{options.count}" if options.count != 2
+    raise QItArgumentError, "QItArgumentError :: Incorrect number of arguments. Expected 2 got #{options.count}" if options.count != 2
     
     queue_name = options[0]
     sleep_period = options[1]
@@ -29,8 +29,7 @@ class Publisher
   def self.valid_sleep_period?(sleep_period)
     max_sleep_period = /\A([5-9]|1\d{1}|20)\z/
     
-    raise QItNullSleepTimeError, "QItNullSleepTimeError :: #{self} Sleep period cannot be nil." if sleep_period.nil?
-    raise QItArgumentError, "QItArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 5-20 seconds." unless sleep_period.match(max_sleep_period)
+    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 5-20 seconds." unless sleep_period.match(max_sleep_period)
     
     sleep_period
   end
@@ -38,8 +37,7 @@ class Publisher
   def self.valid_queue_name?(queue_name)
     queue_name_regex = /(\w[-]*){3,80}/
     
-    raise QItInvalidQueueNameError, "Queue Name is invalid. Check format." unless queue_name.match?(queue_name_regex)
-    raise QItNullQueueNameError, "QItNullQueueNameError :: #{self} Queue Name cannot be nil." if queue_name.nil?
+    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Queue Name is invalid. Check format." unless queue_name.match?(queue_name_regex)
     
     queue_name
   end
