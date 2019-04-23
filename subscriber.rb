@@ -1,21 +1,43 @@
 require 'aws-sdk-sqs'
 require_relative 'load_aws'
 require_relative 'aws_sqs_client'
-
+require_relative 'q_it_errors'
 class Subscriber
 
   attr_reader :sqs, :sleep_period, :queue_url
 
   def initialize(options)
     @sqs = AwsSQSClient.new.client
-    @queue_url = options[0].chomp
-    @sleep_period = valid_sleep_period?(options[1]) ? options[1].to_i : 5
+    @queue_url = options[0]
+    @sleep_period = options[1].to_i
   end
 
-  def valid_sleep_period?(sleep_period)
-    max_sleep_period = /\A([3-9]|1[0-5])\z/
-    !sleep_period.nil? && sleep_period.match?(max_sleep_period)
+  def self.validate(options)
+    raise QItArgumentError, "QItArgumentError :: Incorrect number of arguments. Expected 2 got #{options.count}" if options.count != 2
+
+    valid_sqs_url?(options[0]) && valid_sleep_period?(options[1])
   end
+  
+  def self.valid_sqs_url?(sqs_url)
+    valid_sqs_url_regex = /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/[^.]+\z/
+    
+    unless sqs_url.match?(valid_sqs_url_regex)
+      raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid SQS URL #{sqs_url}." 
+    else
+      true
+    end    
+  end
+
+  def self.valid_sleep_period?(sleep_period)
+    max_sleep_period = /\A([3-9]|1[0-5])\z/
+    
+    unless sleep_period.match?(max_sleep_period)
+      raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 3-15 seconds." 
+    else
+      true
+    end
+  end
+
   
 
 # Todo: URL validation /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/([a-zA-Z]*\d*[-_]*)+|(.fifo)\z/
