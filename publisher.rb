@@ -27,17 +27,21 @@ class Publisher
   def self.valid_sleep_period?(sleep_period)
     max_sleep_period = /\A([5-9]|1\d{1}|20)\z/
     
-    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 5-20 seconds." unless sleep_period.match?(max_sleep_period)
-    
-    sleep_period
+    unless sleep_period.match?(max_sleep_period)
+      raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 5-20 seconds."
+    else
+      true
+    end
   end
 
   def self.valid_queue_name?(queue_name)
     queue_name_regex = /(\w[-]*){3,80}/
     
-    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Queue Name is invalid. Check format." unless queue_name.match?(queue_name_regex)
-    
-    queue_name
+    unless queue_name.match?(queue_name_regex)
+      raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Queue Name is invalid. Check format."
+    else
+      true
+    end
   end
 
   def publish_messages(queue_url)

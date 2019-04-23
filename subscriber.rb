@@ -21,17 +21,21 @@ class Subscriber
   def self.valid_sqs_url?(sqs_url)
     valid_sqs_url_regex = /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/[^.]+\z/
     
-    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid SQS URL #{sqs_url}." unless sqs_url.match?(valid_sqs_url_regex)
-    
-    sqs_url
+    unless sqs_url.match?(valid_sqs_url_regex)
+      raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid SQS URL #{sqs_url}." 
+    else
+      true
+    end    
   end
 
   def self.valid_sleep_period?(sleep_period)
     max_sleep_period = /\A([3-9]|1[0-5])\z/
     
-    raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 3-15 seconds." unless sleep_period.match?(max_sleep_period)
-    
-    sleep_period
+    unless sleep_period.match?(max_sleep_period)
+      raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid sleep period #{sleep_period}. Sleep period range is between 3-15 seconds." 
+    else
+      true
+    end
   end
 
   
