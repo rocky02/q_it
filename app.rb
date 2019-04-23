@@ -18,7 +18,7 @@ def run_service(options)
     subscriber = Subscriber.new(options)
     subscriber.start
   else
-    raise QItNoServiceError, "Invalid service name. Try #{SERVICES.join(', ')}." if (service.nil? || SERVICES.include?(service.downcase))
+    raise QItNoServiceError, "Invalid service name. Try #{SERVICES.join(', ')}." if (service.nil? || !SERVICES.include?(service.downcase))
   end  
 end
 
