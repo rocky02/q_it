@@ -1,3 +1,5 @@
-aws.yml
+# Ignore Files
 .byebug_history
 
+# Ignore Folders
+config/aws.*
