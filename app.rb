@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
-require_relative 'publisher.rb'
-require_relative 'subscriber.rb'
-require_relative 'q_it_errors'
+require_relative 'lib/publisher.rb'
+require_relative 'lib/subscriber.rb'
+require_relative 'lib/q_it_errors'
 
 SERVICES = ['publish', 'subscribe']
 
