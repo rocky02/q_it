@@ -1,7 +1,4 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-service = ARGV[0]
-url = ARGV[1]
-sleep_period = ARGV[2]
-%x(ruby bin/app.rb service url sleep_period)
+system("ruby", "bin/app.rb", ARGV[0], ARGV[1], ARGV[2])
