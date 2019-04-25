@@ -1,4 +1,3 @@
-QIt_ROOT = Dir.pwd
 require 'rubygems'
 require 'bundler/setup'
 Dir.glob(File.join('lib', '**', '*.rb')).each { |file| require_relative "../#{file}" }

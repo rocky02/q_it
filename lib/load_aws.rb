@@ -1,6 +1,7 @@
 require 'yaml'
+require_relative '../config/q_it'
 
-AWS_PATH = File.join(Dir.pwd, 'config/aws.yml')
+AWS_PATH = File.join(QIt.root, 'config/aws.yml')
 
 def generate_aws_yml_file
   sample_aws = {"aws"=>{"access_key_id"=>"", "secret_access_key"=>"", "region"=>""}}
