@@ -1,8 +1,7 @@
+QIt_ROOT = Dir.pwd
 require 'rubygems'
 require 'bundler/setup'
-require_relative '../lib/publisher.rb'
-require_relative '../lib/subscriber.rb'
-require_relative '../lib/q_it_errors'
+Dir.glob(File.join('lib', '**', '*.rb')).each { |file| require_relative "../#{file}" }
 
 SERVICES = ['publish', 'subscribe']
 
