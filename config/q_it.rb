@@ -2,7 +2,9 @@
 # the application among all classes and modules.
 class QIt
  
+  @@root ||= Dir.pwd
+  
   def self.root
-    Dir.pwd
+    @@root
   end
 end
