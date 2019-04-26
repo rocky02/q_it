@@ -1,8 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
-require_relative 'publisher.rb'
-require_relative 'subscriber.rb'
-require_relative 'q_it_errors'
+Dir.glob(File.join('lib', '**', '*.rb')).each { |file| require_relative "../#{file}" }
 
 SERVICES = ['publish', 'subscribe']
 
@@ -26,6 +24,7 @@ end
 options = ARGV
 service = options[0]
 raise QItArgumentError, "Wrong Arguments. Check documentation on how to run the service." if options.length !=3
+
 begin
   puts "Starting Queue Service..."
   run_service(options)

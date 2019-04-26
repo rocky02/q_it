@@ -1,15 +1,18 @@
 require 'yaml'
+require_relative '../config/q_it'
+
+AWS_PATH = File.join(QIt.root, 'config/aws.yml')
 
 def generate_aws_yml_file
   sample_aws = {"aws"=>{"access_key_id"=>"", "secret_access_key"=>"", "region"=>""}}
-  File.open(File.join(Dir.pwd, 'aws.yml'), 'w') do |file|
+  File.open(AWS_PATH, 'w') do |file|
     file.puts sample_aws.to_yaml
   end
 end
 
 begin
-  if File.exists?(File.join(Dir.pwd, 'aws.yml'))
-    AWS = YAML.load(File.read('aws.yml'))["aws"]
+  if File.exists?(AWS_PATH)
+    AWS = YAML.load(File.read(AWS_PATH))["aws"]
     if AWS.values.any?(&:empty?)
       puts "Fill in the appropriate values for the aws.yml file"
       exit 1
