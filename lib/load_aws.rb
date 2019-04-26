@@ -11,7 +11,7 @@ def generate_aws_yml_file
 end
 
 begin
-  if File.exists?(File.join(Dir.pwd, 'config/aws.yml'))
+  if File.exists?(AWS_PATH)
     AWS = YAML.load(File.read(AWS_PATH))["aws"]
     if AWS.values.any?(&:empty?)
       puts "Fill in the appropriate values for the aws.yml file"
