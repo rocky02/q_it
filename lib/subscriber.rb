@@ -38,9 +38,6 @@ class Subscriber
     end
   end
 
-  
-
-# Todo: URL validation /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/([a-zA-Z]*\d*[-_]*)+|(.fifo)\z/
   def read_queue
     loop do
       result = sqs.receive_message(queue_url: queue_url, max_number_of_messages: 1)
