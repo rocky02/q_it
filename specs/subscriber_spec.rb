@@ -42,4 +42,14 @@ RSpec.describe Subscriber do
     end
   end
 
+  context '#read_queue' do
+    let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
+    let (:sleep_period) { "3" }
+    let (:subscriber) { Subscriber.new([url, sleep_period]) }
+
+    it 'should subscribe to queue given by the url' do
+      expect(subscriber).to receive(:read_queue).and_return(true)
+    end
+  end
+
 end
