@@ -1,16 +1,20 @@
 require 'rspec'
 require 'simplecov'
+SimpleCov.start
 require_relative '../lib/publisher'
 require_relative '../lib/subscriber'
 
 
-SimpleCov.start
 RSpec.describe Subscriber do
   context '#valid_queue_name?' do
     let (:valid_queue_name) { "test_123" }
+    let (:invalid_queue_name1) { 'a'*81 }
+    let (:invalid_queue_name2) { 'testing/1@2' }
     
-    it "should validate the url's per aws sqs format" do
+    it "should validate the queue name as per aws sqs format" do
       expect(Publisher.valid_queue_name?(valid_queue_name)).to be_truthy
+      expect { Publisher.valid_queue_name?(invalid_queue_name1) }.to raise_error(QItInvalidArgumentError)
+      expect { Publisher.valid_queue_name?(invalid_queue_name2) }.to raise_error(QItInvalidArgumentError)
     end
   end
 
@@ -18,6 +22,7 @@ RSpec.describe Subscriber do
     let (:valid_sleep_period) { '7' }
     let (:lower_invalid_sleep_period) { '2' }
     let (:upper_invalid_sleep_period) { '21' }
+    
     it 'validates the sleep period' do
       expect(Publisher.valid_sleep_period?(valid_sleep_period)).to be_truthy
       expect { Publisher.valid_sleep_period?(lower_invalid_sleep_period) }.to raise_error(QItInvalidArgumentError)
@@ -33,7 +38,6 @@ RSpec.describe Subscriber do
     it 'should read from queue' do
     	result = publisher.create_std_q
     	url = "https://sqs.ap-south-1.amazonaws.com/217287599168/test123"
-    	puts result.queue_url
       expect(result.queue_url).to eq(url)
     end
   end

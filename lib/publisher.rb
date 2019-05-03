@@ -35,7 +35,7 @@ class Publisher
   end
 
   def self.valid_queue_name?(queue_name)
-    queue_name_regex = /(\w[-]*){3,80}/
+    queue_name_regex = /^(?=[\w-]{1,80}$)[\w-]*/
     
     unless queue_name.match?(queue_name_regex)
       raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Queue Name is invalid. Check format."
