@@ -1,10 +1,10 @@
 require 'rspec'
 require 'simplecov'
-SimpleCov.start
 require_relative '../lib/publisher'
 require_relative '../lib/subscriber'
 
 
+SimpleCov.start
 RSpec.describe Subscriber do
   context '#valid_queue_name?' do
     let (:valid_queue_name) { "test_123" }
@@ -16,8 +16,12 @@ RSpec.describe Subscriber do
 
   context '#valid_sleep_period?' do
     let (:valid_sleep_period) { '7' }
-    it 'subscribes from a queue' do
+    let (:lower_invalid_sleep_period) { '2' }
+    let (:upper_invalid_sleep_period) { '21' }
+    it 'validates the sleep period' do
       expect(Publisher.valid_sleep_period?(valid_sleep_period)).to be_truthy
+      expect { Publisher.valid_sleep_period?(lower_invalid_sleep_period) }.to raise_error(QItInvalidArgumentError)
+      expect { Publisher.valid_sleep_period?(upper_invalid_sleep_period) }.to raise_error(QItInvalidArgumentError)
     end
   end
 
