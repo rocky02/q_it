@@ -1,4 +1,4 @@
-require_relative 'spec_helper'
+# require_relative 'spec_helper'
 
 RSpec.describe Publisher do
   context '#valid_queue_name?' do

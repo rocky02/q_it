@@ -1,5 +1,4 @@
-require_relative 'spec_helper'
-
+# require_relative 'spec_helper'
 
 RSpec.describe Subscriber do
   context '#valid_sqs_url?' do
