@@ -1,5 +1,3 @@
-# require_relative 'spec_helper'
-
 RSpec.describe Subscriber do
   context '#valid_sqs_url?' do
     valid_url =  "https://sqs.ap-south-1.amazonaws.com/123432145678/test_123"
