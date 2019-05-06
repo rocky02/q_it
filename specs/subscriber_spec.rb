@@ -1,7 +1,4 @@
-require 'rspec'
-require 'simplecov'
-SimpleCov.start
-require_relative '../lib/subscriber'
+require_relative 'spec_helper'
 
 
 RSpec.describe Subscriber do

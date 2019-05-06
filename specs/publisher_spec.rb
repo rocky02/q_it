@@ -1,7 +1,4 @@
-require 'rspec'
-require 'simplecov'
-SimpleCov.start
-require_relative '../lib/publisher'
+require_relative 'spec_helper'
 
 RSpec.describe Publisher do
   context '#valid_queue_name?' do
