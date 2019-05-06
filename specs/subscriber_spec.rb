@@ -11,8 +11,11 @@ RSpec.describe Subscriber do
     let (:invalid_url1) { "https://sqs.ap-south-1.amazonaws.com/123432145678/test_123.com" }
     let (:invalid_url2) { "https://sqs.ap-south-1.amazonaws.com/1234145678/test_123" }
     
-    it "should validate the url's per aws sqs format" do
+    it "should validate the url's per aws sqs format and return true for valid url" do
       expect(Subscriber.valid_sqs_url?(valid_url)).to be_truthy
+    end
+
+    it "should validate the url's per aws sqs format and raise error for invalid url" do
       expect { Subscriber.valid_sqs_url?(invalid_url1) }.to raise_error(QItInvalidArgumentError)
       expect { Subscriber.valid_sqs_url?(invalid_url2) }.to raise_error(QItInvalidArgumentError)
     end
@@ -23,8 +26,13 @@ RSpec.describe Subscriber do
     let (:lower_invalid_sleep_period) { '2' }
     let (:upper_invalid_sleep_period) { '16' }
     
-    it 'validates the sleep period between 3-15 seconds' do
+    it 'should validate the sleep period between 3-15 seconds and return true for valid sleep period' do
       expect(Subscriber.valid_sleep_period?(valid_sleep_period)).to be_truthy
+      expect { Subscriber.valid_sleep_period?(lower_invalid_sleep_period) }.to raise_error(QItInvalidArgumentError)
+      expect { Subscriber.valid_sleep_period?(upper_invalid_sleep_period) }.to raise_error(QItInvalidArgumentError)
+    end
+
+    it 'should validate the sleep period between 3-15 seconds and raise error for invalid sleep period' do
       expect { Subscriber.valid_sleep_period?(lower_invalid_sleep_period) }.to raise_error(QItInvalidArgumentError)
       expect { Subscriber.valid_sleep_period?(upper_invalid_sleep_period) }.to raise_error(QItInvalidArgumentError)
     end
@@ -35,8 +43,11 @@ RSpec.describe Subscriber do
     let (:missing_url_options) { ['4'] }
     let (:missing_slp_time_options) { ['https://sqs.ap-south-1.amazonaws.com/123432145678/test_123'] }
     
-    it 'should validate the options provided for subscription service' do
+    it 'should validate the options provided for subscription service and return true for valid options' do
       expect(Subscriber.validate(valid_options)).to be_truthy
+    end
+
+    it 'should validate the options provided for subscription service and raise error if any option is invalid' do
       expect { Subscriber.validate(missing_url_options) }.to raise_error(QItArgumentError)
       expect { Subscriber.validate(missing_slp_time_options) }.to raise_error(QItArgumentError)
     end
@@ -47,8 +58,10 @@ RSpec.describe Subscriber do
     let (:sleep_period) { "3" }
     let (:subscriber) { Subscriber.new([url, sleep_period]) }
 
+
     it 'should subscribe to queue given by the url' do
-      expect(subscriber).to receive(:read_queue).and_return(true)
+      allow(subscriber).to receive(:read_queue).and_return(true)
+      expect(subscriber.read_queue).to be_truthy
     end
   end
 
