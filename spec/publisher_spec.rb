@@ -1,4 +1,12 @@
 RSpec.describe Publisher do
+  let (:aws_json) { { aws: {access_key_id: 'test_access_key_007', secret_access_key: 'test_secret_key_007', region: 'test-region-007'} }.to_json }
+  let (:aws_client) { Aws::SQS::Client.new(stub_responses: true) }
+  
+  before do
+    aws_client.stub_responses(:publish_messages, true)
+    allow_any_instance_of(Publisher).to receive(:sqs).and_return(aws_client)
+  end
+
   context '#valid_queue_name?' do
     valid_queue_name = "test_123"
     invalid_queue_name1 = 'a'*81
@@ -50,7 +58,7 @@ RSpec.describe Publisher do
 
     it "should publish messages to the queue" do
       allow(publisher).to receive(:publish_messages).with(url).and_return(true)
-      expect(publisher.publish_messages(url)).to be_truthy      
+      expect(publisher.publish_messages(url)).to be_truthy
     end
   end
 

@@ -17,7 +17,6 @@ require 'simplecov'
 SimpleCov.start
 require_relative '../lib/publisher'
 require_relative '../lib/subscriber'
-require_relative '../lib/aws_sqs_client'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

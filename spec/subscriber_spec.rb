@@ -1,4 +1,13 @@
 RSpec.describe Subscriber do
+
+  let (:aws_json) { { aws: {access_key_id: 'test_access_key_007', secret_access_key: 'test_secret_key_007', region: 'test-region-007'} }.to_json }
+  let(:aws_client) { Aws::SQS::Client.new(stub_responses: true) }
+
+  before do
+    aws_client.stub_responses(:receive_messages, true)
+    allow_any_instance_of(Subscriber).to receive(:sqs).and_return(aws_client)
+  end
+
   context '#valid_sqs_url?' do
     valid_url =  "https://sqs.ap-south-1.amazonaws.com/123432145678/test_123"
     invalid_url1 = "https://sqs.ap-south-1.amazonaws.com/123432145678/test_123.com"
