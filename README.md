@@ -14,7 +14,7 @@ To start the service use -
 Publishing messages with Q_IT
 
 ```
-> bin/q_it_server publish <url/name> <sleep_period>
+> bin/q_it_server publish <queue-name> <sleep_period>
 
 ```
 
@@ -27,7 +27,7 @@ Publishing messages with Q_IT
 Subscribing to messages with Q_IT
 
 ```
-> bin/q_it_server subscribe <url/name> <sleep_period>
+> bin/q_it_server subscribe <queue-url> <sleep_period>
 
 ```
 
