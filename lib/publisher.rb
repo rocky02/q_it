@@ -1,5 +1,5 @@
 require 'aws-sdk-sqs'
-require_relative 'load_aws'
+require_relative 'aws_loader'
 require_relative 'aws_sqs_client'
 require_relative 'q_it_errors'
 
