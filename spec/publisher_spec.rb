@@ -67,15 +67,9 @@ RSpec.describe Publisher do
     
     it "should publish messages to the queue" do
       allow(client).to receive(:send_message).with({queue_url: queue_url, message_body: message})
+      allow(publisher).to receive(:loop).and_yield
       expect(client).to receive(:send_message).with(queue_url: queue_url, message_body: message)
-      expect(publisher).to receive(:publish_messages).with(queue_url)
       publisher.publish_messages(queue_url) 
-      # begin
-      #   Timeout.timeout(0.001) do
-      #     publisher.publish_messages(queue_url)
-      #   end
-      # rescue Timeout::Error
-      # end
     end
   end
 
