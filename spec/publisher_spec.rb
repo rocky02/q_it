@@ -1,12 +1,6 @@
+require 'byebug'
 RSpec.describe Publisher do
-  let (:aws_json) { { aws: {access_key_id: 'test_access_key_007', secret_access_key: 'test_secret_key_007', region: 'test-region-007'} }.to_json }
-  let (:aws_client) { Aws::SQS::Client.new(stub_responses: true) }
   
-  before do
-    aws_client.stub_responses(:publish_messages, true)
-    allow_any_instance_of(Publisher).to receive(:sqs).and_return(aws_client)
-  end
-
   context '#valid_queue_name?' do
     valid_queue_name = "test_123"
     invalid_queue_name1 = 'a'*81
@@ -43,22 +37,45 @@ RSpec.describe Publisher do
   	let (:queue_name) { 'test123' }
     let (:options) { [queue_name, 6] }
     let (:publisher) { Publisher.new(options)}
-    let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
+    let (:aws_sqs_client) { double('sqs') }
+    let (:client) { double('client') }
+
+    before do
+      allow(aws_sqs_client).to receive(:client).and_return(client)
+      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+    end
 
     it "should read from queue" do
-      allow(publisher).to receive(:create_std_q).and_return(url)
-      expect(publisher.create_std_q).to eq(url)
+      allow(client).to receive(:create_queue)
+      expect(client).to receive(:create_queue).with(queue_name: queue_name)
+      publisher.create_std_q
     end
   end
 
   context "#publish_messages(queue_url)" do
     let (:queue_name) { "test123" }
-    let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
+    let (:queue_url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
+    let (:message) { { count: 0, timestamp: Time.now.localtime.strftime("%F %T") }.to_json }
+    let (:aws_sqs_client) { double('sqs') }
+    let (:client) { double('client') }
     let (:publisher) { Publisher.new(queue_name) }
 
+    before do
+      allow(aws_sqs_client).to receive(:client).and_return(client)
+      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+    end
+    
     it "should publish messages to the queue" do
-      allow(publisher).to receive(:publish_messages).with(url).and_return(true)
-      expect(publisher.publish_messages(url)).to be_truthy
+      allow(client).to receive(:send_message).with({queue_url: queue_url, message_body: message})
+      expect(client).to receive(:send_message).with(queue_url: queue_url, message_body: message)
+      expect(publisher).to receive(:publish_messages).with(queue_url)
+      publisher.publish_messages(queue_url) 
+      # begin
+      #   Timeout.timeout(0.001) do
+      #     publisher.publish_messages(queue_url)
+      #   end
+      # rescue Timeout::Error
+      # end
     end
   end
 
