@@ -1,13 +1,5 @@
 RSpec.describe Subscriber do
 
-  let (:aws_json) { { aws: {access_key_id: 'test_access_key_007', secret_access_key: 'test_secret_key_007', region: 'test-region-007'} }.to_json }
-  let(:aws_client) { Aws::SQS::Client.new(stub_responses: true) }
-
-  before do
-    aws_client.stub_responses(:receive_messages, true)
-    allow_any_instance_of(Subscriber).to receive(:sqs).and_return(aws_client)
-  end
-
   context '#valid_sqs_url?' do
     valid_url =  "https://sqs.ap-south-1.amazonaws.com/123432145678/test_123"
     invalid_url1 = "https://sqs.ap-south-1.amazonaws.com/123432145678/test_123.com"
@@ -59,11 +51,23 @@ RSpec.describe Subscriber do
   context '#read_queue' do
     let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
     let (:sleep_period) { "3" }
+    let (:aws_sqs_client) { double('sqs') }
     let (:subscriber) { Subscriber.new([url, sleep_period]) }
+    let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
+    let (:receieved_messages) { sqs.stub_data(:receive_message, messages: [{ body:'hello world' }, { body: 'foo bar' }]) }
 
+    before do
+      sqs.stub_responses(:receive_message, receieved_messages)
+      allow(aws_sqs_client).to receive(:client).and_return(sqs)
+      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+    end
+    
     it 'should subscribe to queue given by the url' do
-      allow(subscriber).to receive(:read_queue).and_return(true)
-      expect(subscriber.read_queue).to be_truthy
+      allow(sqs).to receive(:receive_message)
+      #TODO: Update response stub to have message_id, receipt_handle and body.
+      #      Stub response for delete_message.
+      expect(sqs).to receive(:receive_message).with(queue_url: url, max_number_of_messages: 1)
+      subscriber.read_queue
     end
   end
 end
