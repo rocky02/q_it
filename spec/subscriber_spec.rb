@@ -1,3 +1,4 @@
+require 'byebug'
 RSpec.describe Subscriber do
 
   context '#valid_sqs_url?' do
@@ -54,19 +55,25 @@ RSpec.describe Subscriber do
     let (:aws_sqs_client) { double('sqs') }
     let (:subscriber) { Subscriber.new([url, sleep_period]) }
     let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
-    let (:receieved_messages) { sqs.stub_data(:receive_message, messages: [{ body:'hello world' }, { body: 'foo bar' }]) }
+    let (:messages) { [{ message_id: 'test123_msg_01', receipt_handle: '123', body:'hello world' }, { message_id: 'test123_msg_02', receipt_handle: '456', body: 'foo bar' }] }
+
 
     before do
-      sqs.stub_responses(:receive_message, receieved_messages)
       allow(aws_sqs_client).to receive(:client).and_return(sqs)
       allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+      allow(subscriber).to receive(:loop).and_yield
+      allow(sqs).to receive(:receive_message)
+      allow(sqs).to receive(:delete_message)
     end
     
     it 'should subscribe to queue given by the url' do
-      allow(sqs).to receive(:receive_message)
-      #TODO: Update response stub to have message_id, receipt_handle and body.
-      #      Stub response for delete_message.
+      sqs.stub_responses(:receive_message, messages: messages)
+
       expect(sqs).to receive(:receive_message).with(queue_url: url, max_number_of_messages: 1)
+      # expect(sqs).to receive(:delete_message)
+      # messages.map { |m| m[:receipt_handle] }.each do |handle|
+      #   expect(sqs).to receive(:delete_message).with(queue_url: url, receipt_handle: handle)
+      # end
       subscriber.read_queue
     end
   end
