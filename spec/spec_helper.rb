@@ -15,8 +15,8 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'simplecov'
 SimpleCov.start
-require_relative '../lib/publisher'
-require_relative '../lib/subscriber'
+require_relative '../config/q_it'
+require File.join(QIt.root, 'application_config')
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

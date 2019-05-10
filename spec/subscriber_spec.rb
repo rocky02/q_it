@@ -1,4 +1,3 @@
-require 'byebug'
 RSpec.describe Subscriber do
 
   context '#valid_sqs_url?' do

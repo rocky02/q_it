@@ -1,4 +1,3 @@
-require 'byebug'
 RSpec.describe Publisher do
   
   context '#valid_queue_name?' do

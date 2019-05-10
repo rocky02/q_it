@@ -1,7 +1,4 @@
-require 'aws-sdk-sqs'
-require_relative 'aws_loader'
-require_relative 'aws_sqs_client'
-require_relative 'q_it_errors'
+require File.join(QIt.root, 'application_config')
 
 class Publisher
   

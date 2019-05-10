@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
-Dir.glob(File.join('lib', '**', '*.rb')).each { |file| require_relative "../#{file}" }
+require_relative '../application_config'
+# Dir.glob(File.join('lib', '**', '*.rb')).each { |file| require_relative "../#{file}" }
 
 SERVICES = ['publish', 'subscribe']
 
