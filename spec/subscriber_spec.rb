@@ -53,7 +53,6 @@ RSpec.describe Subscriber do
     let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
     let (:sleep_period) { "3" }
     let (:aws_sqs_client) { double('sqs') }
-    let (:result) { instance_double('Aws::SQS::Types::ReceiveMessageResult') }
     let (:subscriber) { Subscriber.new([url, sleep_period]) }
     let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
     let (:messages) { [{ message_id: 'test123_msg_01', receipt_handle: '123', body:'hello world' }, { message_id: 'test123_msg_02', receipt_handle: '456', body: 'foo bar' }] }
