@@ -53,6 +53,7 @@ RSpec.describe Subscriber do
     let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
     let (:sleep_period) { "3" }
     let (:aws_sqs_client) { double('sqs') }
+    let (:result) { instance_double('Aws::SQS::Types::ReceiveMessageResult') }
     let (:subscriber) { Subscriber.new([url, sleep_period]) }
     let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
     let (:messages) { [{ message_id: 'test123_msg_01', receipt_handle: '123', body:'hello world' }, { message_id: 'test123_msg_02', receipt_handle: '456', body: 'foo bar' }] }
@@ -62,18 +63,19 @@ RSpec.describe Subscriber do
       allow(aws_sqs_client).to receive(:client).and_return(sqs)
       allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
       allow(subscriber).to receive(:loop).and_yield
-      allow(sqs).to receive(:receive_message)
-      allow(sqs).to receive(:delete_message)
     end
     
     it 'should subscribe to queue given by the url' do
       sqs.stub_responses(:receive_message, messages: messages)
+      result = sqs.receive_message(queue_url: url, max_number_of_messages: 1)
+      
+      allow(sqs).to receive(:receive_message).and_return(result)
+      allow(sqs).to receive(:delete_message)
 
       expect(sqs).to receive(:receive_message).with(queue_url: url, max_number_of_messages: 1)
-      # expect(sqs).to receive(:delete_message)
-      # messages.map { |m| m[:receipt_handle] }.each do |handle|
-      #   expect(sqs).to receive(:delete_message).with(queue_url: url, receipt_handle: handle)
-      # end
+      messages.map { |m| m[:receipt_handle] }.each do |handle|
+        expect(sqs).to receive(:delete_message).with(queue_url: url, receipt_handle: handle)
+      end
       subscriber.read_queue
     end
   end
