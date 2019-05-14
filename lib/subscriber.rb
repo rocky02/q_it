@@ -17,7 +17,7 @@ class Subscriber
   end
   
   def self.valid_sqs_url?(sqs_url)
-    valid_sqs_url_regex = /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/[^.]+\z/
+    valid_sqs_url_regex = /\A(https:\/\/sqs.)#{AwsLoader::AWS["region"]}.amazonaws.com\/\d{12}\/[^.]+\z/
     
     unless sqs_url.match?(valid_sqs_url_regex)
       raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid SQS URL #{sqs_url}." 

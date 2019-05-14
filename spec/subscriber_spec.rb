@@ -5,6 +5,10 @@ RSpec.describe Subscriber do
     invalid_url1 = "https://sqs.ap-south-1.amazonaws.com/123432145678/test_123.com"
     invalid_url2 = "https://sqs.ap-south-1.amazonaws.com/1234145678/test_123"
 
+    before do 
+      stub_const('AwsLoader::AWS', {"access_key_id"=>"access_key", "secret_access_key"=>"secret_access_key", "region"=>"ap-south-1"})
+    end
+
     it "should validate the url's per aws sqs format and return true for #{valid_url}" do
       expect(Subscriber.valid_sqs_url?(valid_url)).to be_truthy
     end
@@ -37,6 +41,10 @@ RSpec.describe Subscriber do
     missing_url_options = ['4']
     missing_slp_time_options = ['https://sqs.ap-south-1.amazonaws.com/123432145678/test_123']
     
+    before do 
+      stub_const('AwsLoader::AWS', {"access_key_id"=>"access_key", "secret_access_key"=>"secret_access_key", "region"=>"ap-south-1"})
+    end
+
     it "should validate the options provided for subscription service and return true for #{valid_options}" do
       expect(Subscriber.validate(valid_options)).to be_truthy
     end
