@@ -15,8 +15,7 @@ module AwsLoader
   def configure_aws_file
     begin
       if File.exists?(AWS_PATH)
-        aws = YAML.load(File.read(AWS_PATH))["aws"]
-        if aws.values.any?(&:empty?)
+        if AWS.values.any?(&:empty?)
           puts "Fill in the appropriate values for the aws.yml file"
           exit 1
         end 
