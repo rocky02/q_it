@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
 require_relative '../application_config'
-# Dir.glob(File.join('lib', '**', '*.rb')).each { |file| require_relative "../#{file}" }
 class App
   include AwsLoader
 
