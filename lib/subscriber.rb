@@ -39,7 +39,6 @@ class Subscriber
   def read_queue
     loop do
       result = sqs.receive_message(queue_url: queue_url, max_number_of_messages: 1)
-      # byebug
       result.messages.each do |msg|
         puts "-"*50
         puts "Message_id: #{msg.message_id}"

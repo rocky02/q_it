@@ -7,7 +7,7 @@ RSpec.describe Subscriber do
 
     before do 
       stub_const('AwsLoader::AWS', {"access_key_id"=>"access_key", "secret_access_key"=>"secret_access_key", "region"=>"ap-south-1"})
-    end
+    end 
 
     it "should validate the url's per aws sqs format and return true for #{valid_url}" do
       expect(Subscriber.valid_sqs_url?(valid_url)).to be_truthy
@@ -83,6 +83,23 @@ RSpec.describe Subscriber do
         expect(sqs).to receive(:delete_message).with(queue_url: url, receipt_handle: handle)
       end
       subscriber.read_queue
+    end
+  end
+
+  context '#start' do
+    let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
+    let (:sleep_period) { "3" }
+    let (:aws_sqs_client) { double('sqs') }
+    let (:subscriber) { Subscriber.new([url, sleep_period]) }
+    let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
+
+    before do
+      allow(aws_sqs_client).to receive(:client).and_return(sqs)
+      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+    end
+    it 'should start the subscriber service by reading from queue' do
+      expect(subscriber).to receive(:read_queue)
+      subscriber.start
     end
   end
 end
