@@ -72,4 +72,70 @@ RSpec.describe Publisher do
     end
   end
 
+  context '#validate' do
+
+    context 'raise errors while validating arguments' do
+      let (:no_args) { [] }
+      let (:more_args) { ['foobar', '6', 'barfoo'] }
+      let (:less_args) { ['foobar'] }
+      
+      it 'should raise a QItArgumentError if no arguments are provided' do
+        expect { Publisher.validate(no_args) }.to raise_error(QItArgumentError)
+      end
+      it 'should raise a QItArgumentError if more than 2 arguments are provided' do
+        expect { Publisher.validate(more_args) }.to raise_error(QItArgumentError)
+      end
+      it 'should raise a QItArgumentError if less than 2 arguments are provided' do
+        expect { Publisher.validate(less_args) }.to raise_error(QItArgumentError)
+      end
+    end
+
+    context 'boolean returned for different values of args' do
+      let (:correct_options) { ['test_queue_123', '7'] }
+      let (:invalid_queue_name) { ['$hello-world', '5'] }
+      let (:invalid_sleep_period) { ['test_queue_123', '123'] }
+
+      before do
+        allow(Publisher).to receive(:valid_queue_name?)
+        allow(Publisher).to receive(:valid_sleep_period?)
+      end
+
+      it 'should return truthy value when arguments provided are valid' do
+        allow(Publisher).to receive(:valid_queue_name?).and_call_original
+        allow(Publisher).to receive(:valid_sleep_period?).and_call_original
+        expect(Publisher.validate(correct_options)).to be_truthy
+      end
+
+      it 'should return truthy value when arguments provided are valid' do
+        expect(Publisher.validate(invalid_queue_name)).to be_falsey
+      end
+      
+      it 'should return truthy value when arguments provided are valid' do
+        expect(Publisher.validate(invalid_sleep_period)).to be_falsey
+      end
+    end
+  end
+
+  context '#start' do
+    let (:queue_name) { "test123" }
+    let (:queue_url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
+    let (:aws_sqs_client) { double('sqs') }
+    let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
+    let (:publisher) { Publisher.new(queue_name) }
+
+    before do
+      allow(aws_sqs_client).to receive(:client).and_return(sqs)
+      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+      stub_const('AwsLoader::AWS', {"access_key_id"=>"access_key", "secret_access_key"=>"secret_access_key", "region"=>"ap-south-1"})
+      sqs.stub_responses(:create_queue, queue_url: queue_url)
+    end
+    
+    it 'should start the publish service to the queue' do
+      queue = sqs.create_queue(queue_name: queue_name)
+      expect(publisher).to receive(:create_std_q).and_return(queue)
+      expect(publisher).to receive(:publish_messages).with(queue_url)
+      expect(STDOUT).to receive(:puts).with("Queue URL :: #{queue_url}")
+      publisher.start
+    end
+  end
 end
