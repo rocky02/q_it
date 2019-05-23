@@ -1,7 +1,5 @@
-require 'aws-sdk-sqs'
-require_relative 'load_aws'
-require_relative 'aws_sqs_client'
-require_relative 'q_it_errors'
+require File.join(QIt.root, 'application_config')
+
 class Subscriber
 
   attr_reader :sqs, :sleep_period, :queue_url
@@ -19,7 +17,7 @@ class Subscriber
   end
   
   def self.valid_sqs_url?(sqs_url)
-    valid_sqs_url_regex = /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/[^.]+\z/
+    valid_sqs_url_regex = /\A(https:\/\/sqs.)#{AwsLoader::AWS["region"]}.amazonaws.com\/\d{12}\/[^.]+\z/
     
     unless sqs_url.match?(valid_sqs_url_regex)
       raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Invalid SQS URL #{sqs_url}." 
@@ -38,13 +36,9 @@ class Subscriber
     end
   end
 
-  
-
-# Todo: URL validation /\A(https:\/\/sqs.)#{AWS["region"]}.amazonaws.com\/\d{12}\/([a-zA-Z]*\d*[-_]*)+|(.fifo)\z/
   def read_queue
     loop do
       result = sqs.receive_message(queue_url: queue_url, max_number_of_messages: 1)
-      
       result.messages.each do |msg|
         puts "-"*50
         puts "Message_id: #{msg.message_id}"

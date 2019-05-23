@@ -1,7 +1,4 @@
-require 'aws-sdk-sqs'
-require_relative 'load_aws'
-require_relative 'aws_sqs_client'
-require_relative 'q_it_errors'
+require File.join(QIt.root, 'application_config')
 
 class Publisher
   
@@ -35,7 +32,7 @@ class Publisher
   end
 
   def self.valid_queue_name?(queue_name)
-    queue_name_regex = /(\w[-]*){3,80}/
+    queue_name_regex = /^(?=[\w-]{1,80}$)[\w-]*/
     
     unless queue_name.match?(queue_name_regex)
       raise QItInvalidArgumentError, "QItInvalidArgumentError :: #{self} Queue Name is invalid. Check format."
@@ -45,8 +42,10 @@ class Publisher
   end
 
   def publish_messages(queue_url)
-    0.upto(Float::INFINITY) do |count|
+    count = 0
+    loop do
       message = { count: count, timestamp: Time.now.localtime.strftime("%F %T") }.to_json
+      count +=1
       puts "Sending message - #{message}"
       sqs.send_message(queue_url: queue_url, message_body: message)
       sleep(sleep_period)
