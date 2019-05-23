@@ -46,7 +46,7 @@ class Publisher
     loop do
       message = { count: count, timestamp: Time.now.localtime.strftime("%F %T") }.to_json
       count +=1
-      puts "Sending message - #{message}"
+      puts "Sending message - ".colorize(:blue) + " #{message}".colorize(:blue).bold
       sqs.send_message(queue_url: queue_url, message_body: message)
       sleep(sleep_period)
     end
@@ -54,7 +54,7 @@ class Publisher
 
   def start
     queue = create_std_q
-    puts "Queue URL :: #{queue.queue_url}"
+    puts "Queue URL :: ".colorize(:green) + " #{queue.queue_url}".colorize(:green).underline
     publish_messages(queue.queue_url)
   end
 end

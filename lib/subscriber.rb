@@ -40,10 +40,14 @@ class Subscriber
     loop do
       result = sqs.receive_message(queue_url: queue_url, max_number_of_messages: 1)
       result.messages.each do |msg|
-        puts "-"*50
-        puts "Message_id: #{msg.message_id}"
-        puts "Receipt Handle: #{msg.receipt_handle}"
-        puts "Message Body: #{msg.body}"
+        puts("*".colorize(:cyan).bold*50)
+        puts("*".colorize(:cyan).bold*50)
+        puts "Message_id: ".colorize(:yellow).bold + " #{msg.message_id}".colorize(:yellow)
+        puts("-".colorize(:cyan)*50)
+        puts "Receipt Handle: ".colorize(:blue).bold + " #{msg.receipt_handle}".colorize(:blue)
+        puts("-".colorize(:cyan)*50)
+        puts "Message Body: ".colorize(:green).bold + " #{msg.body}".colorize(:green)
+        puts("-".colorize(:cyan)*50)
         sqs.delete_message(queue_url: queue_url, receipt_handle: msg.receipt_handle)
       end
       sleep(sleep_period)
