@@ -19,6 +19,10 @@ require_relative '../config/q_it'
 require File.join(QIt.root, 'application_config')
 
 RSpec.configure do |config|
+
+  config.register_ordering(:global) do |items|
+    items.reverse
+  end
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
