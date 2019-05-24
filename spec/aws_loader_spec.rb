@@ -1,3 +1,8 @@
+# Dummy class for testing module
+class ModuleTest
+  include AwsLoader
+end
+
 RSpec.describe AwsLoader do
 
   let (:mod_test) { ModuleTest.new }
