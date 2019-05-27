@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
-require_relative '../application_config'
+require_relative '../boot'
 class App
   include AwsLoader
 

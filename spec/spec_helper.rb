@@ -16,7 +16,7 @@
 require 'simplecov'
 SimpleCov.start
 require_relative '../config/application'
-require File.join(Application.root, 'application_config')
+require File.join(Application.root, 'boot')
 
 RSpec.configure do |config|
 
