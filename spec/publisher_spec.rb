@@ -134,7 +134,6 @@ RSpec.describe Publisher do
       queue = sqs.create_queue(queue_name: queue_name)
       expect(publisher).to receive(:create_std_q).and_return(queue)
       expect(publisher).to receive(:publish_messages).with(queue_url)
-      expect(STDOUT).to receive(:puts).and_return("Queue URL :: #{queue_url}")
       publisher.start
     end
   end
