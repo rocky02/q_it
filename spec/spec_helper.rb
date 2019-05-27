@@ -15,8 +15,8 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'simplecov'
 SimpleCov.start
-require_relative '../config/q_it'
-require File.join(QIt.root, 'application_config')
+require_relative '../config/application'
+require File.join(Application.root, 'application_config')
 
 RSpec.configure do |config|
 

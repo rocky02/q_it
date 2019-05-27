@@ -6,7 +6,7 @@ end
 RSpec.describe AwsLoader do
 
   let (:mod_test) { ModuleTest.new }
-  let (:logger) { Logger.new(File.join(QIt.root, 'log/q_it.log')) }
+  let (:logger) { Logger.new(File.join(Application.root, 'log/q_it.log')) }
 
   context 'aws.yml file' do    
     context '#configure_aws_file' do
@@ -18,7 +18,7 @@ RSpec.describe AwsLoader do
       end
       
       it 'should return true for aws.yml file check and check for aws config values in the file' do
-        stub_const('AwsLoader::AWS_PATH', File.join(QIt.root, 'aws.yml'))
+        stub_const('AwsLoader::AWS_PATH', File.join(Application.root, 'aws.yml'))
         stub_const('AwsLoader::AWS', {"access_key_id"=>"", "secret_access_key"=>"", "region"=>""})
         allow(File).to receive(:exists?).with(AwsLoader::AWS_PATH).and_return(true)
         expect(mod_test).to_not receive(:generate_aws_yml_file)

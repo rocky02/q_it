@@ -1,4 +1,4 @@
-require File.join(QIt.root, 'application_config')
+require File.join(Application.root, 'application_config')
 
 class Publisher
   

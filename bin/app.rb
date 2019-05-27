@@ -34,5 +34,5 @@ begin
   puts "Starting Queue Service...".colorize(:cyan)
   app.run_service(options)
 rescue ArgumentError => e
-  QIt.log.error "There is an exception in the #{service} service #{e.inspect}"
+  Application.log.error "There is an exception in the #{service} service #{e.inspect}"
 end

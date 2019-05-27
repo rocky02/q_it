@@ -1,6 +1,6 @@
 # This class contains methods and constants to be used throughout 
 # the application among all classes and modules.
-class QIt
+class Application
 
   @@root ||= Dir.pwd
 
@@ -14,9 +14,9 @@ class QIt
     end
 
     def generate_log_file
-      Dir.mkdir(File.join(QIt.root, 'log')) unless File.exists?(File.join(QIt.root, 'log'))
+      Dir.mkdir(File.join(Application.root, 'log')) unless File.exists?(File.join(Application.root, 'log'))
     end
   end
 end
 
-QIt.generate_log_file
+Application.generate_log_file
