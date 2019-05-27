@@ -16,13 +16,38 @@ RSpec.describe AwsLoader do
         expect(mod_test).to receive(:generate_aws_yml_file)
         mod_test.configure_aws_file
       end
-      
-      it 'should return true for aws.yml file check and check for aws config values in the file' do
+    end
+
+    # context 'no aws key values' do
+    #   it 'should return true for aws.yml file check log error for no values for the aws config keys in it' do
+    #     stub_const('AwsLoader::AWS_PATH', File.join(Application.root, 'aws.yml'))
+    #     allow(File).to receive(:exists?).with(AwsLoader::AWS_PATH).and_return(true)
+    #     allow(File).to receive(:read).with(AwsLoader::AWS_PATH).and_return({'aws' => {"access_key_id"=>"", "secret_access_key"=>"", "region"=>""}})
+    #     allow(YAML).to receive(:load).and_return({ 'aws' => { "access_key_id"=>"", "secret_access_key"=>"", "region"=>"" } })
+    #     expect(Application).to receive_message_chain(:log, :error).with("Fill in the appropriate values for the aws.yml file")
+    #     mod_test.configure_aws_file
+    #   end
+    # end
+
+    context 'not generate an aws.yml file when it exists' do 
+      it 'should return true for aws.yml file check' do
         stub_const('AwsLoader::AWS_PATH', File.join(Application.root, 'aws.yml'))
         stub_const('AwsLoader::AWS', {"access_key_id"=>"", "secret_access_key"=>"", "region"=>""})
         allow(File).to receive(:exists?).with(AwsLoader::AWS_PATH).and_return(true)
         expect(mod_test).to_not receive(:generate_aws_yml_file)
         mod_test.configure_aws_file
+      end
+    end
+
+    context '#generate_aws_yml_file' do
+      let (:file) { double('file') }
+      
+      it 'should create a aws.yml file and populate it with the expected keys' do
+        stub_const('AwsLoader::AWS_PATH', File.join(Application.root, 'aws.yml'))
+        sample_aws = {"aws"=>{"access_key_id"=>"", "secret_access_key"=>"", "region"=>""}}.to_yaml
+        expect(File).to receive(:open).with(AwsLoader::AWS_PATH, 'w').and_yield(file)
+        expect(file).to receive(:puts).with(sample_aws)
+        mod_test.generate_aws_yml_file
       end
     end
   end
