@@ -36,12 +36,12 @@ RSpec.describe Publisher do
   	let (:queue_name) { 'test123' }
     let (:options) { [queue_name, 6] }
     let (:publisher) { Publisher.new(options)}
-    let (:aws_sqs_client) { double('sqs') }
+    let (:aws_client) { double('sqs') }
     let (:client) { double('client') }
 
     before do
-      allow(aws_sqs_client).to receive(:client).and_return(client)
-      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+      allow(aws_client).to receive(:client).and_return(client)
+      allow(AwsClient).to receive(:new).and_return(aws_client)
     end
 
     it "should read from queue" do
@@ -55,13 +55,13 @@ RSpec.describe Publisher do
     let (:queue_name) { "test123" }
     let (:queue_url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
     let (:message) { { count: 0, timestamp: Time.now.localtime.strftime("%F %T") }.to_json }
-    let (:aws_sqs_client) { double('sqs') }
+    let (:aws_client) { double('sqs') }
     let (:client) { double('client') }
     let (:publisher) { Publisher.new(queue_name) }
 
     before do
-      allow(aws_sqs_client).to receive(:client).and_return(client)
-      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+      allow(aws_client).to receive(:client).and_return(client)
+      allow(AwsClient).to receive(:new).and_return(aws_client)
     end
     
     it "should publish messages to the queue" do
@@ -119,13 +119,13 @@ RSpec.describe Publisher do
   context '#start' do
     let (:queue_name) { "test123" }
     let (:queue_url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
-    let (:aws_sqs_client) { double('sqs') }
+    let (:aws_client) { double('sqs') }
     let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
     let (:publisher) { Publisher.new(queue_name) }
 
     before do
-      allow(aws_sqs_client).to receive(:client).and_return(sqs)
-      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+      allow(aws_client).to receive(:client).and_return(sqs)
+      allow(AwsClient).to receive(:new).and_return(aws_client)
       stub_const('AwsLoader::AWS', {"access_key_id"=>"access_key", "secret_access_key"=>"secret_access_key", "region"=>"ap-south-1"})
       sqs.stub_responses(:create_queue, queue_url: queue_url)
     end
@@ -134,7 +134,6 @@ RSpec.describe Publisher do
       queue = sqs.create_queue(queue_name: queue_name)
       expect(publisher).to receive(:create_std_q).and_return(queue)
       expect(publisher).to receive(:publish_messages).with(queue_url)
-      expect(STDOUT).to receive(:puts).with("Queue URL :: #{queue_url}")
       publisher.start
     end
   end

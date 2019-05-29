@@ -59,15 +59,15 @@ RSpec.describe Subscriber do
   context '#read_queue' do
     let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
     let (:sleep_period) { "3" }
-    let (:aws_sqs_client) { double('sqs') }
+    let (:aws_client) { double('sqs') }
     let (:subscriber) { Subscriber.new([url, sleep_period]) }
     let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
     let (:messages) { [{ message_id: 'test123_msg_01', receipt_handle: '123', body:'hello world' }, { message_id: 'test123_msg_02', receipt_handle: '456', body: 'foo bar' }] }
 
 
     before do
-      allow(aws_sqs_client).to receive(:client).and_return(sqs)
-      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+      allow(aws_client).to receive(:client).and_return(sqs)
+      allow(AwsClient).to receive(:new).and_return(aws_client)
       allow(subscriber).to receive(:loop).and_yield
     end
     
@@ -89,13 +89,13 @@ RSpec.describe Subscriber do
   context '#start' do
     let (:url) { "https://sqs.ap-south-1.amazonaws.com/217287599168/test123" }
     let (:sleep_period) { "3" }
-    let (:aws_sqs_client) { double('sqs') }
+    let (:aws_client) { double('sqs') }
     let (:subscriber) { Subscriber.new([url, sleep_period]) }
     let (:sqs) { Aws::SQS::Client.new(stub_responses: true) }
 
     before do
-      allow(aws_sqs_client).to receive(:client).and_return(sqs)
-      allow(AwsSQSClient).to receive(:new).and_return(aws_sqs_client)
+      allow(aws_client).to receive(:client).and_return(sqs)
+      allow(AwsClient).to receive(:new).and_return(aws_client)
     end
     it 'should start the subscriber service by reading from queue' do
       expect(subscriber).to receive(:read_queue)

@@ -1,24 +1,48 @@
+# Dummy class for testing module
+class ModuleTest
+  include AwsLoader
+end
+
 RSpec.describe AwsLoader do
 
   let (:mod_test) { ModuleTest.new }
 
+  before do
+    stub_const('AwsLoader::AWS_PATH', File.join(Application.root, 'aws.yml'))
+  end
+
   context 'aws.yml file' do    
     context '#configure_aws_file' do
-      it 'should return false for aws.yml file check and call #configure_aws_file and create a new .yml file' do
-        stub_const('AwsLoader::AWS_PATH', nil)
-        allow(File).to receive(:exists?).and_return(false)
-        expect(STDOUT).to receive(:puts).and_return('No `aws.yml` file present!')
-        expect(STDOUT).to receive(:puts).and_return('Created file and set the appropriate values!')
-        expect(mod_test).to receive(:generate_aws_yml_file)
-        mod_test.configure_aws_file
+      it 'should call #generate_aws_yml_file' do
+        allow(File).to receive(:exists?).with(AwsLoader::AWS_PATH).and_return(false)
+        expect{ mod_test.configure_aws_file }.to raise_error(SystemExit)
       end
-      
-      it 'should return true for aws.yml file check and check for aws config values in the file' do
-        stub_const('AwsLoader::AWS_PATH', File.join(QIt.root, 'aws.yml'))
-        stub_const('AwsLoader::AWS', {"access_key_id"=>"", "secret_access_key"=>"", "region"=>""})
+    end
+
+    context 'no aws key values' do
+      it 'should log error for no values for the aws config keys in it' do
         allow(File).to receive(:exists?).with(AwsLoader::AWS_PATH).and_return(true)
-        expect(STDOUT).to receive(:puts).and_return('Fill in the appropriate values for the aws.yml file')
-        mod_test.configure_aws_file
+        allow(File).to receive(:read).with(AwsLoader::AWS_PATH).and_return({'aws' => {"access_key_id"=>"", "secret_access_key"=>"", "region"=>""}})
+        allow(YAML).to receive(:load).and_return({ 'aws' => { "access_key_id"=>"", "secret_access_key"=>"", "region"=>"" } })
+        expect{ mod_test.configure_aws_file }.to raise_error(SystemExit)
+      end
+    end
+
+    context 'aws.yml exists' do 
+      it 'should not generate aws.yml file' do
+        allow(File).to receive(:exists?).with(AwsLoader::AWS_PATH).and_return(true)
+        expect{ mod_test.configure_aws_file }.to raise_error(SystemExit)
+      end
+    end
+
+    context '#generate_aws_yml_file' do
+      let (:file) { double('file') }
+      
+      it 'should generate aws.yml file write the expected keys' do
+        sample_aws = {"aws"=>{"access_key_id"=>"", "secret_access_key"=>"", "region"=>""}}.to_yaml
+        expect(File).to receive(:open).with(AwsLoader::AWS_PATH, 'w').and_yield(file)
+        expect(file).to receive(:puts).with(sample_aws)
+        mod_test.generate_aws_yml_file
       end
     end
   end

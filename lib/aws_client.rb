@@ -1,4 +1,4 @@
-class AwsSQSClient
+class AwsClient
 
   attr_reader :client
   

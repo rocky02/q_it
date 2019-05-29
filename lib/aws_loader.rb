@@ -1,8 +1,8 @@
 require 'yaml'
-require_relative '../config/q_it'
+require_relative '../config/application'
 module AwsLoader
   
-  AWS_PATH = File.join(QIt.root, 'config/aws.yml')
+  AWS_PATH = File.join(Application.root, 'config/aws.yml')
   AWS = YAML.load(File.read(AWS_PATH))["aws"] if File.exists?(AWS_PATH)
   
   def generate_aws_yml_file
@@ -17,22 +17,17 @@ module AwsLoader
       if File.exists?(AWS_PATH)
         aws = YAML.load(File.read(AWS_PATH))["aws"]
         if aws.values.any?(&:empty?)
-          puts "Fill in the appropriate values for the aws.yml file".colorize(:light_red)
+          Application.log.error "Fill in the appropriate values for the aws.yml file"
           exit 1
         end 
       else
-        puts "No `aws.yml` file present!".colorize(:red)
+        Application.log.warn "No `aws.yml` file present!"
         generate_aws_yml_file
-        puts "Created file and set the appropriate values!".colorize(:red)
+        Application.log.warn "Created file and set the appropriate values!"
         exit 1
       end
     rescue => e
-      puts "Exception with aws.yml file #{e.inspect}".colorize(:light_red)
+      Application.log.error "Exception with aws.yml file #{e.inspect}"
     end
   end
-end
-
-# Dummy class for RSpec testing purposes
-class ModuleTest
-  include AwsLoader
 end
