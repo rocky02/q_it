@@ -5,7 +5,7 @@ class Publisher
   attr_reader :sqs, :sleep_period, :queue_name
 
   def initialize(options)
-    @sqs = AwsSQSClient.new.client
+    @sqs = AwsClient.new.client
     @queue_name = options[0]
     @sleep_period = options[1].to_i
   end
