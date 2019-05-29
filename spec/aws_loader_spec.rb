@@ -9,7 +9,7 @@ RSpec.describe AwsLoader do
 
   context 'aws.yml file' do    
     context '#configure_aws_file' do
-      it 'should call #configure_aws_file' do
+      it 'should call #generate_aws_yml_file' do
         stub_const('AwsLoader::AWS_PATH', nil)
         allow(File).to receive(:exists?).with(AwsLoader::AWS_PATH).and_return(false)
         expect(mod_test).to receive(:generate_aws_yml_file)
