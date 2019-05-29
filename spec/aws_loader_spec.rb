@@ -30,7 +30,6 @@ RSpec.describe AwsLoader do
     context 'aws.yml exists' do 
       it 'should not generate aws.yml file' do
         stub_const('AwsLoader::AWS_PATH', File.join(Application.root, 'aws.yml'))
-        stub_const('AwsLoader::AWS', {"access_key_id"=>"", "secret_access_key"=>"", "region"=>""})
         allow(File).to receive(:exists?).with(AwsLoader::AWS_PATH).and_return(true)
         expect(mod_test).to_not receive(:generate_aws_yml_file)
         mod_test.configure_aws_file
